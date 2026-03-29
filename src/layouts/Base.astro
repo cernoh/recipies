@@ -1,0 +1,47 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'A collection of family recipes with a touch of island warmth' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | Island Kitchen</title>
+  <meta name="description" content={description}>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Theme Styles -->
+  <link rel="stylesheet" href="/styles/theme.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="site-nav__content">
+      <a href="/" class="site-nav__logo">
+        <span>🏝️</span>
+        <span>Island Kitchen</span>
+      </a>
+    </div>
+  </nav>
+  
+  <main>
+    <slot />
+  </main>
+  
+  <footer class="site-footer">
+    <p>Made with 🌺 and island warmth</p>
+  </footer>
+</body>
+</html>

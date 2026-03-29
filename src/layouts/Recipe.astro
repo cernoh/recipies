@@ -1,0 +1,85 @@
+---
+import Base from './Base.astro';
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  recipe: CollectionEntry<'recipes'>;
+}
+
+const { recipe } = Astro.props;
+const { Content } = await render(recipe);
+const { title, servings, cuisine, prepTime, cookTime, difficulty, tags, description, isMauritian } = recipe.data;
+---
+
+<Base title={title} description={description}>
+  <article>
+    <header class="recipe-hero">
+      <div class="island-badge">
+        <span>{isMauritian ? '🇲🇺' : '🍽️'}</span>
+        <span>{cuisine || 'Recipe'}</span>
+      </div>
+      
+      <h1 class="recipe-hero__title">{title}</h1>
+      
+      {description && (
+        <p class="recipe-hero__subtitle">{description}</p>
+      )}
+      
+      <div class="recipe-meta-bar">
+        <div class="recipe-meta-item">
+          <span class="recipe-meta-item__label">Servings</span>
+          <span class="recipe-meta-item__value">{servings}</span>
+        </div>
+        
+        {prepTime && (
+          <div class="recipe-meta-item">
+            <span class="recipe-meta-item__label">Prep Time</span>
+            <span class="recipe-meta-item__value">{prepTime}</span>
+          </div>
+        )}
+        
+        {cookTime && (
+          <div class="recipe-meta-item">
+            <span class="recipe-meta-item__label">Cook Time</span>
+            <span class="recipe-meta-item__value">{cookTime}</span>
+          </div>
+        )}
+        
+        {difficulty && (
+          <div class="recipe-meta-item">
+            <span class="recipe-meta-item__label">Difficulty</span>
+            <span class="recipe-meta-item__value">{difficulty}</span>
+          </div>
+        )}
+      </div>
+      
+      {tags && tags.length > 0 && (
+        <div class="recipe-card__tags" style="margin-top: 1.5rem; justify-content: center;">
+          {tags.map((tag: string) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </header>
+    
+    <div class="recipe-section">
+      <Content />
+    </div>
+    
+    {isMauritian && (
+      <div class="recipe-section">
+        <div class="mauritian-note">
+          <p>This recipe brings the authentic flavors of Mauritius — a beautiful island nation in the Indian Ocean known for its diverse culinary heritage blending Creole, Indian, Chinese, and European influences.</p>
+        </div>
+      </div>
+    )}
+    
+    <div class="recipe-section" style="text-align: center; padding-top: 2rem;">
+      <a href="/" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #00b3aa, #00c7b0); color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">
+        <span>←</span>
+        <span>Back to all recipes</span>
+      </a>
+    </div>
+  </article>
+</Base>

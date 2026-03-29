@@ -1,17 +1,110 @@
 ---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
 
+const recipes = await getCollection('recipes');
+const sortedRecipes = recipes.sort((a, b) => {
+  // Show Mauritian recipes first
+  if (a.data.isMauritian && !b.data.isMauritian) return -1;
+  if (!a.data.isMauritian && b.data.isMauritian) return 1;
+  return a.data.title.localeCompare(b.data.title);
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Home" description="A collection of family recipes with a touch of island warmth, featuring Mauritian and international dishes">
+  <section class="home-hero">
+    <h1 class="home-hero__title">Island Kitchen</h1>
+    <p class="home-hero__subtitle">
+      Family recipes with a touch of island warmth. From the sunny shores of Mauritius 
+      to your kitchen — discover flavors that bring people together.
+    </p>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+      <span style="font-size: 2rem;">🌴</span>
+      <span style="font-size: 2rem;">🌺</span>
+      <span style="font-size: 2rem;">🍛</span>
+      <span style="font-size: 2rem;">🥘</span>
+      <span style="font-size: 2rem;">🌊</span>
+    </div>
+  </section>
+  
+  <section class="recipe-grid">
+    {sortedRecipes.map((recipe) => (
+      <a
+        href={`/recipes/${recipe.id}`}
+        class="recipe-card"
+        style="text-decoration: none; color: inherit;"
+      >
+        <div 
+          class="recipe-card__image"
+          style={recipe.data.isMauritian 
+            ? 'background: linear-gradient(135deg, #d0e6d0, #f9c3c3, #f0993d);' 
+            : 'background: linear-gradient(135deg, #d4e6f2, #d0e6d0);'
+          }
+        >
+          <span style="font-size: 4rem;">
+            {recipe.data.isMauritian ? '🇲🇺' : '🍽️'}
+          </span>
+        </div>
+        
+        <div class="recipe-card__content">
+          <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+            {recipe.data.isMauritian && (
+              <span class="tag tag--mauritian">Mauritian</span>
+            )}
+            {recipe.data.cuisine && !recipe.data.isMauritian && (
+              <span class="tag">{recipe.data.cuisine}</span>
+            )}
+          </div>
+          
+          <h2 class="recipe-card__title">{recipe.data.title}</h2>
+          
+          {recipe.data.description && (
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.5;">
+              {recipe.data.description}
+            </p>
+          )}
+          
+          <div class="recipe-card__meta">
+            <span>👥 {recipe.data.servings}</span>
+            {recipe.data.difficulty && (
+              <span>📊 {recipe.data.difficulty}</span>
+            )}
+          </div>
+          
+          {recipe.data.tags && recipe.data.tags.length > 0 && (
+            <div class="recipe-card__tags">
+              {recipe.data.tags.slice(0, 3).map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+              {recipe.data.tags.length > 3 && (
+                <span class="tag" style="background: transparent; border: 1px solid var(--surf-crest);">
+                  +{recipe.data.tags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </a>
+    ))}
+  </section>
+  
+  <section style="max-width: 800px; margin: 0 auto; padding: 3rem 2rem; text-align: center;">
+    <h2 style="color: var(--accent-secondary); margin-bottom: 1rem;">About This Collection</h2>
+    <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem;">
+      These recipes have been passed down through generations, each one carrying the warmth 
+      and hospitality of island cooking. Whether it is the aromatic spices of Mauritian 
+      lentil soup or the comforting familiarity of fried rice, every dish tells a story 
+      of family, culture, and the joy of sharing a meal together.
+    </p>
+    
+    <div style="margin-top: 2rem; padding: 1.5rem; background: var(--sand); border-radius: 16px; border-left: 4px solid var(--mauritius-green);">
+      <p style="margin: 0; font-style: italic; color: var(--text-primary);">
+        "Good food is all the sweeter when shared with good friends and family."
+      </p>
+      <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">
+        — Island Kitchen Philosophy
+      </p>
+    </div>
+  </section>
+</Base>
